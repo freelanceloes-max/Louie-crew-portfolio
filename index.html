@@ -13,14 +13,6 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <div id="buddy" class="buddy" aria-hidden="true" hidden>
-    <div class="buddy-body">
-      <span class="buddy-face">◕‿◕</span>
-      <span class="buddy-label">BUDDY</span>
-    </div>
-    <p class="buddy-tip">Your cursor co-pilot · draft-then-approve ops</p>
-  </div>
-
   <header class="topbar">
     <div class="wrap topbar-inner">
       <a class="brand" href="#top">Louie <span>Tayad (Loragine)</span></a>
@@ -54,7 +46,7 @@
             Executive assistant muscle + automation wiring. Inbox, CRM, follow-ups, EOD digests —
             nothing leaves without your explicit GO.
           </p>
-          <p class="hero-note">Move your cursor — BUDDY follows along.</p>
+          <p class="hero-note">Move your mouse — BUDDY’s head tracks you (idle + blink too).</p>
           <div class="cta-row">
             <a class="btn btn-gold" href="https://calendly.com/workmodelouie/30min" target="_blank" rel="noopener noreferrer">Book discovery</a>
             <a class="btn btn-ghost" href="#proof">See the rails</a>
@@ -63,17 +55,85 @@
             Draft-then-approve by default. Remote · Asia/Manila · synthetic demos only on this site.
           </p>
         </div>
-        <aside class="hero-panel reveal" aria-label="Pipeline preview">
-          <div class="panel-chrome">
-            <span class="panel-title">Client Pipeline Ops</span>
-            <span class="demo-pill">DEMO</span>
+
+        <aside class="hero-stage reveal" aria-label="BUDDY interactive character">
+          <div id="buddy-stage" class="buddy-stage" data-state="idle">
+            <svg id="buddy-svg" class="buddy-svg" viewBox="0 0 320 380" role="img" aria-label="BUDDY mascot looking toward your cursor">
+              <defs>
+                <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2a2a2a"/>
+                  <stop offset="100%" stop-color="#161616"/>
+                </linearGradient>
+                <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#E8C547"/>
+                  <stop offset="100%" stop-color="#C9A227"/>
+                </linearGradient>
+                <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="6" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <!-- floor shadow -->
+              <ellipse cx="160" cy="352" rx="78" ry="12" fill="#000" opacity="0.35"/>
+
+              <!-- torso -->
+              <g id="torso" class="buddy-torso">
+                <rect x="88" y="210" width="144" height="120" rx="36" fill="url(#bodyGrad)" stroke="#C9A227" stroke-width="2.5"/>
+                <rect x="118" y="236" width="84" height="48" rx="12" fill="#0d0d0d" stroke="rgba(201,162,39,0.45)" stroke-width="1.5"/>
+                <circle cx="160" cy="260" r="6" fill="#C9A227"/>
+                <text x="160" y="300" text-anchor="middle" fill="#C9A227" font-family="system-ui,sans-serif" font-size="13" font-weight="700" letter-spacing="2">BUDDY</text>
+              </g>
+
+              <!-- neck -->
+              <rect x="148" y="196" width="24" height="22" rx="6" fill="#1c1c1c" stroke="#C9A227" stroke-width="1.5"/>
+
+              <!-- head group (rotates / looks) -->
+              <g id="head" class="buddy-head">
+                <ellipse cx="160" cy="128" rx="72" ry="68" fill="url(#bodyGrad)" stroke="#C9A227" stroke-width="2.5" filter="url(#softGlow)"/>
+                <!-- ear antennas -->
+                <g id="antennas">
+                  <line x1="104" y1="88" x2="92" y2="58" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="92" cy="52" r="7" fill="#C9A227"/>
+                  <line x1="216" y1="88" x2="228" y2="58" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="228" cy="52" r="7" fill="#C9A227"/>
+                </g>
+                <!-- face plate -->
+                <ellipse cx="160" cy="136" rx="52" ry="42" fill="#0f0f0f" stroke="rgba(201,162,39,0.35)" stroke-width="1.5"/>
+                <!-- eyes -->
+                <g id="eyes">
+                  <g id="eye-l" class="eye">
+                    <ellipse cx="138" cy="130" rx="14" ry="16" fill="#f2f0ea"/>
+                    <circle id="pupil-l" class="pupil" cx="138" cy="132" r="6.5" fill="#111"/>
+                    <circle cx="140" cy="128" r="2" fill="#fff" opacity="0.85"/>
+                    <rect class="eyelid" x="124" y="114" width="28" height="32" rx="14" fill="#1a1a1a" opacity="0"/>
+                  </g>
+                  <g id="eye-r" class="eye">
+                    <ellipse cx="182" cy="130" rx="14" ry="16" fill="#f2f0ea"/>
+                    <circle id="pupil-r" class="pupil" cx="182" cy="132" r="6.5" fill="#111"/>
+                    <circle cx="184" cy="128" r="2" fill="#fff" opacity="0.85"/>
+                    <rect class="eyelid" x="168" y="114" width="28" height="32" rx="14" fill="#1a1a1a" opacity="0"/>
+                  </g>
+                </g>
+                <!-- smile -->
+                <path id="mouth" d="M146 158 Q160 170 174 158" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <p class="stage-caption"><span id="look-hint">Looking…</span> · draft-then-approve ops</p>
           </div>
-          <ul class="pipeline">
-            <li><strong>Inbox</strong> Acme North · inquiry</li>
-            <li><strong>Qualified</strong> Brightlane · follow-up Fri</li>
-            <li><strong>Proposal</strong> Cedar &amp; Co. · draft ready</li>
-          </ul>
-          <p class="panel-foot">Fake clients · no employer names</p>
+
+          <div class="hero-panel" aria-label="Pipeline preview">
+            <div class="panel-chrome">
+              <span class="panel-title">Client Pipeline Ops</span>
+              <span class="demo-pill">DEMO</span>
+            </div>
+            <ul class="pipeline">
+              <li><strong>Inbox</strong> Acme North · inquiry</li>
+              <li><strong>Qualified</strong> Brightlane · follow-up Fri</li>
+              <li><strong>Proposal</strong> Cedar &amp; Co. · draft ready</li>
+            </ul>
+            <p class="panel-foot">Fake clients · no employer names</p>
+          </div>
         </aside>
       </div>
     </section>
@@ -109,7 +169,7 @@
         <p class="section-label reveal">Crew</p>
         <h2 class="reveal">One person, a full crew.</h2>
         <p class="section-intro reveal">
-          BUDDY coordinates the workstream in Slack; on this page BUDDY is your cursor mascot.
+          BUDDY coordinates the workstream in Slack; on this page BUDDY is the hero character that watches your cursor.
           Same principle offline: clear owners, clean threads, no surprise outbound.
         </p>
         <div class="crew-grid">

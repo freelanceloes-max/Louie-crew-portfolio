@@ -26,16 +26,6 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.55;
-  cursor: none;
-}
-
-@media (pointer: coarse) {
-  body {
-    cursor: auto;
-  }
-  .buddy {
-    display: none !important;
-  }
 }
 
 .skip-link {
@@ -421,50 +411,69 @@ h1 em {
   transform: none;
 }
 
-/* BUDDY cursor follower */
-.buddy {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 9999;
-  pointer-events: none;
-  will-change: transform;
-  transition: opacity 0.25s ease;
-}
 
-.buddy-body {
+/* Hero stage — reel-style BUDDY */
+.hero-stage {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: var(--bg-alt);
-  border: 2px solid var(--gold);
-  border-radius: 16px;
-  padding: 0.35rem 0.55rem 0.25rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  gap: 1rem;
 }
 
-.buddy-face {
-  font-size: 1.1rem;
-  line-height: 1;
+.buddy-stage {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(201, 162, 39, 0.12), transparent 55%),
+    linear-gradient(180deg, #1a1a1a 0%, #111 100%);
+  padding: 1rem 1rem 0.75rem;
+  min-height: 360px;
+  overflow: hidden;
 }
 
-.buddy-label {
-  font-size: 0.55rem;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  color: var(--gold);
+.buddy-stage[data-state="idle"] .buddy-svg {
+  animation: buddyFloat 3.2s ease-in-out infinite;
 }
 
-.buddy-tip {
-  margin: 0.35rem 0 0;
-  font-size: 0.65rem;
-  color: var(--muted);
-  max-width: 9rem;
+.buddy-stage[data-state="tracking"] .buddy-svg {
+  animation: none;
+}
+
+@keyframes buddyFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buddy-stage[data-state="idle"] .buddy-svg {
+    animation: none;
+  }
+}
+
+.buddy-svg {
+  display: block;
+  width: min(100%, 320px);
+  height: auto;
+  margin: 0 auto;
+  transform-origin: 50% 70%;
+}
+
+.stage-caption {
+  margin: 0.25rem 0 0;
   text-align: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  font-size: 0.82rem;
+  color: var(--muted);
 }
 
-.buddy.is-near-cta .buddy-tip {
-  opacity: 1;
+.stage-caption span {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.hero-stage .hero-panel {
+  margin: 0;
+}
+
+.eyelid {
+  pointer-events: none;
 }
