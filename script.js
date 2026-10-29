@@ -1,48 +1,88 @@
 (function () {
   const stage = document.getElementById("buddy-stage");
-  const head = document.getElementById("head");
-  const pupilL = document.getElementById("pupil-l");
-  const pupilR = document.getElementById("pupil-r");
+  const frame = document.getElementById("buddy-frame");
   const hint = document.getElementById("look-hint");
-  const eyelids = document.querySelectorAll(".eyelid");
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   initReveal();
+  if (!stage || !frame) return;
 
-  if (!stage || !head || !pupilL || !pupilR) return;
+  const FRAMES = {
+    center: "assets/buddy/center.jpg",
+    up: "assets/buddy/up.jpg",
+    "up-right": "assets/buddy/up-right.jpg",
+    right: "assets/buddy/right.jpg",
+    "down-right": "assets/buddy/down-right.jpg",
+    down: "assets/buddy/down.jpg",
+    "down-left": "assets/buddy/down-left.jpg",
+    left: "assets/buddy/left.jpg",
+    "up-left": "assets/buddy/up-left.jpg",
+    blink: "assets/buddy/blink.jpg",
+    idle: "assets/buddy/idle.jpg",
+  };
 
-  const eyeHome = { l: { x: 138, y: 132 }, r: { x: 182, y: 132 } };
-  const maxPupil = 5.5;
-  const maxHeadDeg = 18;
+  // preload
+  Object.values(FRAMES).forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
 
-  let target = { x: 0, y: 0 };
-  let current = { x: 0, y: 0 };
-  let headRot = 0;
-  let targetRot = 0;
-  let autoLook = 0;
+  let currentKey = "center";
   let lastMove = performance.now();
   let blinking = false;
-  let userDriven = true;
+  let autoLook = 0;
+  let pendingKey = "center";
 
   function stageCenter() {
     const r = stage.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.38 };
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.42 };
   }
 
-  function applyLook(clientX, clientY, label, fromUser) {
+  function lookKeyFromPointer(clientX, clientY) {
     const c = stageCenter();
     const dx = clientX - c.x;
     const dy = clientY - c.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    const nx = dx / dist;
-    const ny = dy / dist;
-    const intensity = Math.min(1, dist / 280);
-    target.x = nx * maxPupil * intensity;
-    target.y = ny * maxPupil * intensity;
-    targetRot = Math.max(-maxHeadDeg, Math.min(maxHeadDeg, (dx / 18) * intensity));
-    if (hint && label) hint.textContent = label;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 48) return "center";
+    const a = (Math.atan2(dy, dx) * 180) / Math.PI;
+    if (a > -22.5 && a <= 22.5) return "right";
+    if (a > 22.5 && a <= 67.5) return "down-right";
+    if (a > 67.5 && a <= 112.5) return "down";
+    if (a > 112.5 && a <= 157.5) return "down-left";
+    if (a > 157.5 || a <= -157.5) return "left";
+    if (a > -157.5 && a <= -112.5) return "up-left";
+    if (a > -112.5 && a <= -67.5) return "up";
+    return "up-right";
+  }
+
+  function labelFor(key) {
+    const map = {
+      center: "Looking at you",
+      up: "Looking up",
+      "up-right": "Looking up-right",
+      right: "Looking right",
+      "down-right": "Looking down-right",
+      down: "Looking down",
+      "down-left": "Looking down-left",
+      left: "Looking left",
+      "up-left": "Looking up-left",
+      blink: "Blink",
+      idle: "Idle look",
+    };
+    return map[key] || "Looking…";
+  }
+
+  function setFrame(key, fromUser) {
+    if (!FRAMES[key] || blinking) {
+      pendingKey = key;
+      return;
+    }
+    if (key === currentKey) return;
+    currentKey = key;
+    frame.src = FRAMES[key];
+    stage.dataset.look = key;
+    if (hint) hint.textContent = labelFor(key);
     if (fromUser) {
-      userDriven = true;
       lastMove = performance.now();
       stage.dataset.state = "tracking";
     } else {
@@ -50,70 +90,42 @@
     }
   }
 
-  function lookLabel(dx, dy) {
-    const a = (Math.atan2(dy, dx) * 180) / Math.PI;
-    if (Math.hypot(dx, dy) < 40) return "Looking at you";
-    if (a > -22.5 && a <= 22.5) return "Looking right";
-    if (a > 22.5 && a <= 67.5) return "Looking down-right";
-    if (a > 67.5 && a <= 112.5) return "Looking down";
-    if (a > 112.5 && a <= 157.5) return "Looking down-left";
-    if (a > 157.5 || a <= -157.5) return "Looking left";
-    if (a > -157.5 && a <= -112.5) return "Looking up-left";
-    if (a > -112.5 && a <= -67.5) return "Looking up";
-    return "Looking up-right";
-  }
-
   function onPointer(e) {
-    const c = stageCenter();
-    applyLook(e.clientX, e.clientY, lookLabel(e.clientX - c.x, e.clientY - c.y), true);
+    setFrame(lookKeyFromPointer(e.clientX, e.clientY), true);
   }
 
   function blink() {
     if (prefersReduced || blinking) return;
     blinking = true;
-    eyelids.forEach((el) => {
-      el.style.transition = "opacity 0.08s ease";
-      el.style.opacity = "1";
-    });
+    const prev = currentKey === "blink" ? "center" : currentKey;
+    frame.src = FRAMES.blink;
+    stage.dataset.look = "blink";
+    if (hint) hint.textContent = "Blink";
     setTimeout(() => {
-      eyelids.forEach((el) => {
-        el.style.opacity = "0";
-      });
       blinking = false;
-    }, 120);
+      currentKey = "";
+      setFrame(pendingKey || prev, false);
+    }, 140);
   }
 
   function tick(now) {
-    if (!prefersReduced) {
-      if (now - lastMove > 1800) {
-        userDriven = false;
-        autoLook += 0.018;
-        const c = stageCenter();
-        const ax = c.x + Math.sin(autoLook) * 90;
-        const ay = c.y + Math.cos(autoLook * 0.7) * 40;
-        applyLook(ax, ay, "Idle look", false);
-      }
-
-      current.x += (target.x - current.x) * 0.16;
-      current.y += (target.y - current.y) * 0.16;
-      headRot += (targetRot - headRot) * 0.12;
-
-      pupilL.setAttribute("cx", String(eyeHome.l.x + current.x));
-      pupilL.setAttribute("cy", String(eyeHome.l.y + current.y));
-      pupilR.setAttribute("cx", String(eyeHome.r.x + current.x));
-      pupilR.setAttribute("cy", String(eyeHome.r.y + current.y));
-      head.setAttribute("transform", `rotate(${headRot.toFixed(2)} 160 128)`);
+    if (!prefersReduced && now - lastMove > 1800) {
+      autoLook += 0.02;
+      const c = stageCenter();
+      const ax = c.x + Math.sin(autoLook) * 110;
+      const ay = c.y + Math.cos(autoLook * 0.65) * 55;
+      setFrame(lookKeyFromPointer(ax, ay), false);
+      if (hint && stage.dataset.state === "idle") hint.textContent = "Idle look";
     }
     requestAnimationFrame(tick);
   }
 
   window.addEventListener("pointermove", onPointer, { passive: true });
-  const boot = stageCenter();
-  applyLook(boot.x + 60, boot.y - 20, "Looking…", true);
+  setFrame("center", true);
 
   if (!prefersReduced) {
-    setInterval(blink, 3200 + Math.random() * 1800);
-    setTimeout(blink, 900);
+    setInterval(blink, 3400 + Math.random() * 1600);
+    setTimeout(blink, 1100);
   }
 
   requestAnimationFrame(tick);

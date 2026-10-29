@@ -412,7 +412,7 @@ h1 em {
 }
 
 
-/* Hero stage — reel-style BUDDY */
+/* Hero stage — illustrated BUDDY sprites */
 .hero-stage {
   display: flex;
   flex-direction: column;
@@ -424,42 +424,45 @@ h1 em {
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) + 4px);
   background:
-    radial-gradient(ellipse at 50% 20%, rgba(201, 162, 39, 0.12), transparent 55%),
+    radial-gradient(ellipse at 50% 18%, rgba(201, 162, 39, 0.14), transparent 55%),
     linear-gradient(180deg, #1a1a1a 0%, #111 100%);
-  padding: 1rem 1rem 0.75rem;
-  min-height: 360px;
+  padding: 0.75rem 0.75rem 0.65rem;
   overflow: hidden;
+  text-align: center;
 }
 
-.buddy-stage[data-state="idle"] .buddy-svg {
+.buddy-frame {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  margin: 0 auto;
+  border-radius: 18px;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: 50% 70%;
+}
+
+.buddy-stage[data-state="idle"] .buddy-frame {
   animation: buddyFloat 3.2s ease-in-out infinite;
 }
 
-.buddy-stage[data-state="tracking"] .buddy-svg {
+.buddy-stage[data-state="tracking"] .buddy-frame {
   animation: none;
 }
 
 @keyframes buddyFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-7px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .buddy-stage[data-state="idle"] .buddy-svg {
+  .buddy-stage[data-state="idle"] .buddy-frame {
     animation: none;
   }
 }
 
-.buddy-svg {
-  display: block;
-  width: min(100%, 320px);
-  height: auto;
-  margin: 0 auto;
-  transform-origin: 50% 70%;
-}
-
 .stage-caption {
-  margin: 0.25rem 0 0;
+  margin: 0.35rem 0 0;
   text-align: center;
   font-size: 0.82rem;
   color: var(--muted);
@@ -472,8 +475,4 @@ h1 em {
 
 .hero-stage .hero-panel {
   margin: 0;
-}
-
-.eyelid {
-  pointer-events: none;
 }
