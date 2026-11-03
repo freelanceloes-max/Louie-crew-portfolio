@@ -8,17 +8,17 @@
   if (!stage || !frame) return;
 
   const FRAMES = {
-    center: "assets/buddy/center.jpg",
-    up: "assets/buddy/up.jpg",
-    "up-right": "assets/buddy/up-right.jpg",
-    right: "assets/buddy/right.jpg",
-    "down-right": "assets/buddy/down-right.jpg",
-    down: "assets/buddy/down.jpg",
-    "down-left": "assets/buddy/down-left.jpg",
-    left: "assets/buddy/left.jpg",
-    "up-left": "assets/buddy/up-left.jpg",
-    blink: "assets/buddy/blink.jpg",
-    idle: "assets/buddy/idle.jpg",
+    center: "assets/buddy/center.jpg?v=3d",
+    up: "assets/buddy/up.jpg?v=3d",
+    "up-right": "assets/buddy/up-right.jpg?v=3d",
+    right: "assets/buddy/right.jpg?v=3d",
+    "down-right": "assets/buddy/down-right.jpg?v=3d",
+    down: "assets/buddy/down.jpg?v=3d",
+    "down-left": "assets/buddy/down-left.jpg?v=3d",
+    left: "assets/buddy/left.jpg?v=3d",
+    "up-left": "assets/buddy/up-left.jpg?v=3d",
+    blink: "assets/buddy/blink.jpg?v=3d",
+    idle: "assets/buddy/idle.jpg?v=3d",
   };
 
   // preload
